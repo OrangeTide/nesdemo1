@@ -16,7 +16,7 @@ CFLAGS:=-Wall -Wextra -Wshadow -Wsign-compare -Wconversion -Wstrict-prototypes -
 # enable the following for dead code elimination
 #CFLAGS+=-ffunction-sections -fdata-sections -Wl,--gc-sections
 # enable for warnings to stop compilation
-CFLAGS+=-Werror
+# CFLAGS+=-Werror
 
 # turn on BSD things
 CPPFLAGS:=-D_BSD_SOURCE
@@ -26,7 +26,7 @@ CPPFLAGS:=-D_BSD_SOURCE
 
 #LDLIBS:=
 
-# -include $(BUILDINFO_DIR)/config-local.mk
+-include $(BUILDINFO_DIR)/config-local.mk
 
 ##############################################################################
 # OS specific settings

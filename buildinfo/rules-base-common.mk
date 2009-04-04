@@ -24,7 +24,7 @@ stripped/%.$(SOEXT) : %.$(SOEXT)
 	$(CC) $(LDFLAGS) $(TARGET_ARCH) $(filter %.c %.o %.a,$^) -o $@ $(LOADLIBES) $(LDLIBS)
 
 % : %.c
-	$(CC) $(LDFLAGS) $(TARGET_ARCH) $(filter %.c %.o %.a,$^) -o $@ $(LOADLIBES) $(LDLIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH) $(filter %.c %.o %.a,$^) -o $@ $(LOADLIBES) $(LDLIBS)
 
 %.o : %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $(filter %.c %.o %.a,$<)

@@ -21,6 +21,11 @@ find_darwin_sdk()
 	exit 1
 }
 
+if [ \! -e "$(which pkg-config)" ]; then
+	echo "You need pkg-config installed. http://www.macports.org/"
+	exit 1
+fi
+
 case "$OS" in
 	Darwin)
 		find_darwin_sdk
@@ -28,22 +33,44 @@ case "$OS" in
 		X11_LDFLAGS="-L/usr/X11R6/lib -lX11 -lXext"
 		FT2_CFLAGS="-I/usr/include/"
 		FT2_LDFLAGS="-L/usr/X11R6/lib -lfreetype -lz"
-		if [ \! -e "$(which pkg-config)" ]; then
-			echo "You need pkg-config installed. http://www.macports.org/"
-			exit 1
-		fi
-		CAIRO_CFLAGS=$(pkg-config --cflags cairo pixman-1 freetype2)
-		CAIRO_LDFLAGS=$(pkg-config --libs cairo pixman-1 freetype2)
 	;;
 	*)
-		X11_CFLAGS=$(pkg-config --cflags x11 xext)
-		X11_LDFLAGS=$(pkg-config --libs x11 xext)
-		FT2_CFLAGS=$(pkg-config --cflags freetype2)
-		FT2_LDFLAGS=$(pkg-config --libs freetype2)
-		CAIRO_CFLAGS=$(pkg-config --cflags cairo pixman-1 freetype2)
-		CAIRO_LDFLAGS=$(pkg-config --libs cairo pixman-1 freetype2)
+		if pkg-config x11 && pkg-config xext ; then 
+			X11_INSTALLED=yes
+			X11_CFLAGS=$(pkg-config --cflags x11 xext)
+			X11_LDFLAGS=$(pkg-config --libs x11 xext)
+		else
+			X11_INSTALLED=no
+		fi
+
+		# try freetype
+		if pkg-config freetype2 ; then 
+			FT2_INSTALLED=yes
+			FT2_CFLAGS=$(pkg-config --cflags freetype2)
+			FT2_LDFLAGS=$(pkg-config --libs freetype2)
+		else
+			FT2_INSTALLED=no
+		fi
 	;;
 esac
+
+if pkg-config cairo ; then 
+	CAIRO_INSTALLED=yes
+	CAIRO_VERSION=$(pkg-config --modversion cairo)
+	CAIRO_CFLAGS=$(pkg-config --cflags cairo pixman-1 freetype2)
+	CAIRO_LDFLAGS=$(pkg-config --libs cairo pixman-1 freetype2)
+else
+	CAIRO_INSTALLED=no
+fi
+
+if pkg-config libpng ; then 
+	LIBPNG_INSTALLED=yes
+	LIBPNG_VERSION=$(pkg-config --modversion libpng)
+	LIBPNG_CFLAGS=$(pkg-config --cflags libpng)
+	LIBPNG_LDFLAGS=$(pkg-config --libs libpng)
+else
+	LIBPNG_INSTALLED=no
+fi
 
 if [ $? -ne 0 ]; then
 	echo $0:failed
@@ -52,16 +79,24 @@ fi
 
 cat >${CONF} <<EOF
 ## X11
+X11_INSTALLED:=${X11_INSTALLED}
 X11_CFLAGS:=${X11_CFLAGS}
 X11_LDFLAGS:=${X11_LDFLAGS}
 
 ## Freetype2
+FT2_INSTALLED:=${FT2_INSTALLED}
 FT2_CFLAGS:=${FT2_CFLAGS}
 FT2_LDFLAGS:=${FT2_LDFLAGS}
 
 ## Cairo
+CAIRO_INSTALLED:=${CAIRO_INSTALLED}
 CAIRO_CFLAGS:=${CAIRO_CFLAGS}
 CAIRO_LDFLAGS:=${CAIRO_LDFLAGS}
+
+## Libpng
+LIBPNG_INSTALLED:=${LIBPNG_INSTALLED}
+LIBPNG_CFLAGS:=${LIBPNG_CFLAGS}
+LIBPNG_LDFLAGS:=${LIBPNG_LDFLAGS}
 EOF
 
 # on OSX systems use the isysroot to select the SDK
