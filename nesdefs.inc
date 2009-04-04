@@ -1,0 +1,8 @@
+.define PPU_CTRL_REG1 $2000
+.define PPU_CTRL_REG2 $2001
+.define PPU_STATUS $2002
+.define PPU_SPR_ADDR $2003
+.define PPU_SPR_DATA $2004
+.define PPU_SCROLL_REG $2005
+.define PPU_ADDRESS $2006
+.define PPU_DATA $2007
