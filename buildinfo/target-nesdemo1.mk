@@ -1,6 +1,6 @@
 ### nesdemo1
 
-NESDEMO1_SRCS:=nesdemo1.s ineshdr.s
+NESDEMO1_SRCS:=nesdemo1.s
 NESDEMO1_OBJS:=$(patsubst %.s,$(TARGET_DIR)/%.o,$(NESDEMO1_SRCS:%.c=$(TARGET_DIR)/%.o))
 NESDEMO1_EXEC:=nesdemo1.nes
 NESDEMO1_PRG:=$(TARGET_DIR)/nesdemo1.prg
@@ -11,5 +11,5 @@ CLEAN_LIST+=$(NESDEMO1_OBJS) $(NESDEMO1_EXEC) $(NESDEMO1_PRG)
 all :: $(NESDEMO1_EXEC)
 
 $(NESDEMO1_PRG) : $(NESDEMO1_OBJS)
- 
+
 $(NESDEMO1_EXEC) : $(NESDEMO1_PRG) $(NESDEMO1_CHR)

@@ -6,13 +6,12 @@ MEMORY {
 }
 
 SEGMENTS {
-	INESHDR: load = HEADER, type = ro, align = $10;	
 	ZEROPAGE: load = ZP, type = zp;
 	DATA: load = ROM, run = RAM, type = rw, define = yes, align = $100;
 	BSS: load = RAM, type = bss, define = yes, align = $100;
 	CODE: load = ROM, type = ro, align = $100;
 	RODATA: load = ROM, type = ro, align = $100;
-	VECTORS: load = ROM, type = ro, start = $ffaa;
+	VECTORS: load = ROM, type = ro, start = $fffa;
 }
 
 FILES {
