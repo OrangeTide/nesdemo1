@@ -2,7 +2,10 @@ AS.target=ca65
 LD.target=ld65
 
 %.nes : $(TARGET_DIR)/%.prg %.chr
-	nescombine -o $@ $^
+	nescombine -o $@ $(NESCOMBINE_FLAGS) $^
+
+%.nes : $(TARGET_DIR)/%.prg
+	nescombine -o $@ $(NESCOMBINE_FLAGS) $^
 
 %.prg : %.o
 	$(LD.target) -o $@ -C nes.lds $^

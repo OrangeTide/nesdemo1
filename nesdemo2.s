@@ -1,13 +1,14 @@
-; nesdemo1.s - Jon Mayo - April 30, 2009
+; nesdemo2.s - Jon Mayo - April 30, 2009
 ;
-; flashes the screen randomly.
-; uses CHR-RAM and loads data manually.
+; Loads some pretty data
+; uses CHR-ROM
 ;
 
 .include "util.inc"
 .include "nesdefs.inc"
 .segment "ZEROPAGE"
-Flashing_color = 30
+ScrollX = 0
+ScrollY = 0
 
 .segment "RODATA"
 Name_table_entries = 960
@@ -27,20 +28,12 @@ nmi_vect:
 	ora #%10000000
 	sta PPU_CTRL_REG1
 
-	;lda PPU_CTRL_REG2
-	;eor #%01000000
-	;sta PPU_CTRL_REG2
-
-	; set PPU to palette RAM
-	lda #$3f
-	sta PPU_ADDRESS
-	lda #0
-	sta PPU_ADDRESS
-
-	; set background to a new color
-	lda Flashing_color
-	inc Flashing_color
-	sta PPU_DATA
+	; scroll around
+	lda ScrollY ; vertical
+	sta PPU_SCROLL_REG
+	lda ScrollX ; horizontal
+	sta PPU_SCROLL_REG
+	inc ScrollX
 
 	pla ; restore A
 	rti
@@ -83,60 +76,14 @@ vblankwait2:
 	lda #0
 	sta PPU_ADDRESS
 	
-	; set background to blue
-	lda #$21
+	; load first 4 colors
+	lda #$1c ; dark cyan
 	sta PPU_DATA
-
-	; set 3 foreground colors to white
-	lda #$ff
+	lda #$16 ; orange
 	sta PPU_DATA
+	lda #$39 ; yellow
 	sta PPU_DATA
-	sta PPU_DATA
-
-	; set PPU to CHR-RAM (Pattern Table 0)
-	lda #$0
-	sta PPU_ADDRESS
-	lda #0
-	sta PPU_ADDRESS
-
-	; plane0
-	lda #%11111111
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%10100101
-	sta PPU_DATA
-	lda #%10100101
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%10111101
-	sta PPU_DATA
-	lda #%10011001
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%11111111
-	sta PPU_DATA
-
-	; plane1
-	lda #%11111111
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%10000001
-	sta PPU_DATA
-	lda #%11111111
+	lda #$ff ; white
 	sta PPU_DATA
 
 	; set PPU to Name Table 0
@@ -152,6 +99,7 @@ init_name_table1:
 	ldy #$c0
 init_name_table2:
 	sta PPU_DATA
+	adc #1 ; increment
 	dey
 	bne init_name_table2 ; branch on Z=0
 	dex

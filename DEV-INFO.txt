@@ -1,0 +1,66 @@
+Defintions
+----------
+Pattern Table -
+
+Name Table -
+
+OAM -
+	Object Attribute Memory - a display list for 64 sprites, each entry is 4 bytes.
+
+
+PPU Memory Map
+--------------
+  0000h-0FFFh   Pattern Table 0 (4K) (256 Tiles)
+  1000h-1FFFh   Pattern Table 1 (4K) (256 Tiles)
+  2000h-23FFh   Name Table 0 and Attribute Table 0 (1K) (32x30 BG Map)
+  2400h-27FFh   Name Table 1 and Attribute Table 1 (1K) (32x30 BG Map)
+  2800h-2BFFh   Name Table 2 and Attribute Table 2 (1K) (32x30 BG Map)
+  2C00h-2FFFh   Name Table 3 and Attribute Table 3 (1K) (32x30 BG Map)
+  3000h-3EFFh   Mirror of 2000h-2EFFh
+  3F00h-3F1Fh   Background and Sprite Palettes (25 entries used)
+  3F20h-3FFFh   Mirrors of 3F00h-3F1Fh
+
+CPU Memory Map
+--------------
+  0000h-07FFh   Internal 2K Work RAM (mirrored to 800h-1FFFh)
+  2000h-2007h   Internal PPU Registers (mirrored to 2008h-3FFFh)
+  4000h-4017h   Internal APU Registers
+  4018h-5FFFh   Cartridge Expansion Area almost 8K
+  6000h-7FFFh   Cartridge SRAM Area 8K
+  8000h-FFFFh   Cartridge PRG-ROM Area 32K
+
+
+I/O Register Map
+----------------
+  2000h - PPU Control Register 1 (W)
+  2001h - PPU Control Register 2 (W)
+  2002h - PPU Status Register (R)
+  2003h - SPR-RAM Address Register (W)
+  2004h - SPR-RAM Data Register (RW)
+  2005h - PPU Background Scrolling Offset (W2)
+  2006h - VRAM Address Register (W2)
+  2007h - VRAM Read/Write Data Register (RW)
+  4000h - APU Channel 1 (Rectangle) Volume/Decay
+  4001h - APU Channel 1 (Rectangle) Sweep
+  4002h - APU Channel 1 (Rectangle) Frequency
+  4003h - APU Channel 1 (Rectangle) Length
+  4004h - APU Channel 2 (Rectangle) Volume/Decay
+  4005h - APU Channel 2 (Rectangle) Sweep
+  4006h - APU Channel 2 (Rectangle) Frequency
+  4007h - APU Channel 2 (Rectangle) Length
+  4008h - APU Channel 3 (Triangle) Linear Counter
+  4009h - APU Channel 3 (Triangle) N/A
+  400Ah - APU Channel 3 (Triangle) Frequency
+  400Bh - APU Channel 3 (Triangle) Length
+  400Ch - APU Channel 4 (Noise) Volume/Decay
+  400Dh - APU Channel 4 (Noise) N/A
+  400Eh - APU Channel 4 (Noise) Frequency
+  400Fh - APU Channel 4 (Noise) Length
+  4010h - APU Channel 5 (DMC) Play mode and DMA frequency
+  4011h - APU Channel 5 (DMC) Delta counter load register
+  4012h - APU Channel 5 (DMC) Address load register
+  4013h - APU Channel 5 (DMC) Length register
+  4014h - SPR-RAM DMA Register
+  4015h - DMC/IRQ/length counter status/channel enable register (RW)
+  4016h - Joypad #1 (RW)
+  4017h - Joypad #2/APU SOFTCLK (RW)

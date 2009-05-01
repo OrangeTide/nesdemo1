@@ -1,7 +1,6 @@
 MEMORY {
-	ZP: start = $10, size = $f0, type = rw;
-	HEADER: start = $7f00, size = $10, type = ro, file = %O;
-	RAM: start = $0300, size = $0400, type = rw;
+	ZP: start = $0, size = $100, type = rw;
+	RAM: start = $0200, size = $0600, type = rw;
 	ROM: start = $c000, size = $8000, type = ro, file = %O;
 }
 
