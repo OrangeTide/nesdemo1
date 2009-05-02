@@ -1,3 +1,6 @@
+; Utilities for NES programming
+
+;; GENERIC 6502 STUFF
 
 ; arithmetic shift right - taken from cc65 manual
 .macro  asr     arg
@@ -11,5 +14,13 @@
 
 .endmacro
 
+;; NES Specific things : Graphics and PPU
 
+.macro WaitForVBlank
+:
+	lda PPU_STATUS
+	bpl :-
+.endmacro
 
+;; NES Specific things : Gamepads and Input
+;; NES Specific things : Sound and Music

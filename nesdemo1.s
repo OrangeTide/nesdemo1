@@ -4,8 +4,8 @@
 ; uses CHR-RAM and loads data manually.
 ;
 
-.include "util.inc"
 .include "nesdefs.inc"
+.include "util.inc"
 .segment "ZEROPAGE"
 Flashing_color = 30
 
@@ -62,18 +62,12 @@ reset_vect:
 	sta PPU_CTRL_REG1
 	sta PPU_CTRL_REG2
 
-;;; wait for first vblank
-vblankwait1:
-	lda PPU_STATUS
-	bpl vblankwait1
+	WaitForVBlank ; wait for first vblank
 
-;;; clear ram
-; TODO
+	;;; clear ram
+	; TODO
 
-;;; wait for second vblank
-vblankwait2:
-	lda PPU_STATUS
-	bpl vblankwait2
+	WaitForVBlank ; wait for second vblank
 
 ;;; we could do a cold boot / warm boot check here
 
@@ -157,10 +151,7 @@ init_name_table2:
 	dex
 	bne init_name_table1 ; branch on Z=0
 
-;;; wait for vblank before enabling display
-vblankwait3:
-	lda PPU_STATUS
-	bpl vblankwait3
+	WaitForVBlank ; wait for vblank before enabling display
 
 	; enable screen display %fffpcsit
 	; - black background
