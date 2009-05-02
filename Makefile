@@ -1,41 +1,5 @@
-#!/usr/bin/make -f
-
 ##############################################################################
-# universal settings for all platforms and architectures
-##############################################################################
-BUILDINFO_DIR?=buildinfo
-TARGET_DIR?=target
-
-CFLAGS:=-Wall -Wextra -Wshadow -Wsign-compare -Wconversion -Wstrict-prototypes -Wstrict-aliasing -Wpointer-arith -Wcast-align  -Wold-style-definition -Wredundant-decls -Wnested-externs -std=gnu99 -pedantic -g
-# Uninitialized/clobbered variable warning
-#CFLAGS+=-Wuninitialized -O1
-# profiling
-#CFLAGS+=-pg
-# optimization
-#CFLAGS+=-Os
-# enable the following for dead code elimination
-#CFLAGS+=-ffunction-sections -fdata-sections -Wl,--gc-sections
-# enable for warnings to stop compilation
-# CFLAGS+=-Werror
-
-# turn on BSD things
-CPPFLAGS:=-D_BSD_SOURCE
-
-#CPPFLAGS+=-DNDEBUG
-#CPPFLAGS+=-DNTRACE
-
-#LDLIBS:=
-
--include $(BUILDINFO_DIR)/config-local.mk
-
-##############################################################################
-# OS specific settings
-##############################################################################
-HOST_OS:=$(shell uname -s)
-
--include $(BUILDINFO_DIR)/host-$(HOST_OS).mk
-##############################################################################
-# Basic rules
+## Makefile 
 ##############################################################################
 
 all ::
@@ -43,33 +7,69 @@ all ::
 clean ::
 	$(RM) $(CLEAN_LIST)
 
-clean-all : clean
-	$(RM) $(BUILDINFO_DIR)/config-local.mk
-	$(RM) -rf stripped/
-	$(RM) *~
-
-.PHONY : all clean clean-all
+.PHONY : all clean
 
 ##############################################################################
-# Configuration
+## RULES & CONFIG
+##############################################################################
+AS=ca65
+LD=ld65
+
+%.nes : %.prg %.chr
+	nescombine -o $@ $(NESCOMBINE_FLAGS) $^
+
+%.nes : %.prg
+	nescombine -o $@ $(NESCOMBINE_FLAGS) $^
+
+%.prg : %.o
+	$(LD) -o $@ -C nes.lds $^
+
+%.chr : %.png
+	pngtochr -o $@ $^
+
+%.o : %.s
+	$(AS) -o $@ $^
+
+%-pal.o : %.s
+	$(AS) -o $@ -D PAL=1 $^
+
+##############################################################################
+## Targets
 ##############################################################################
 
-$(BUILDINFO_DIR)/config-local.mk : $(BUILDINFO_DIR)/genconfig.sh
-	(cd $(BUILDINFO_DIR) ; ./genconfig.sh )
-
 ##############################################################################
-# Rules
+### nesdemo1
 ##############################################################################
 
--include $(BUILDINFO_DIR)/rules-*-common.mk
+NESDEMO1_SRCS:=nesdemo1.s
+NESDEMO1_OBJS:=$(patsubst %.s,%.o,$(NESDEMO1_SRCS:%.c=%.o))
+NESDEMO1_EXEC:=nesdemo1.nes
+NESDEMO1_PRG:=nesdemo1.prg
+
+CLEAN_LIST+=$(NESDEMO1_OBJS) $(NESDEMO1_EXEC) $(NESDEMO1_PRG)
+
+all :: $(NESDEMO1_EXEC)
+
+$(NESDEMO1_PRG) : $(NESDEMO1_OBJS)
+
+$(NESDEMO1_EXEC) : NESCOMBINE_FLAGS=-m 2
+$(NESDEMO1_EXEC) : $(NESDEMO1_PRG)
 
 ##############################################################################
-# OS specific rules
+### nesdemo2
 ##############################################################################
 
--include $(BUILDINFO_DIR)/rules-*-$(HOST_OS).mk
+NESDEMO2_SRCS:=nesdemo2.s
+NESDEMO2_OBJS:=$(patsubst %.s,%.o,$(NESDEMO2_SRCS:%.c=%.o))
+NESDEMO2_EXEC:=nesdemo2.nes
+NESDEMO2_PRG:=nesdemo2.prg
+NESDEMO2_CHR:=nesdemo2.chr
 
-##############################################################################
-# Targets
-##############################################################################
-include $(wildcard $(BUILDINFO_DIR)/target-*.mk)
+CLEAN_LIST+=$(NESDEMO2_OBJS) $(NESDEMO2_EXEC) $(NESDEMO2_PRG)
+
+all :: $(NESDEMO2_EXEC)
+
+$(NESDEMO2_PRG) : $(NESDEMO2_OBJS)
+
+$(NESDEMO2_EXEC) : NESCOMBINE_FLAGS=-m 0
+$(NESDEMO2_EXEC) : $(NESDEMO2_PRG) $(NESDEMO2_CHR)
