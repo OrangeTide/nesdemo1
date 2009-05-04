@@ -89,7 +89,7 @@ reset_vect:
 	lda #0
 	sta PPU_ADDRESS
 
-	lda #4 ; copy a 4 to each entry
+	lda #'6' ; copy to each entry
 	jsr fill_name_table 
 
 	; set PPU to Name Table #2
@@ -98,7 +98,7 @@ reset_vect:
 	lda #0
 	sta PPU_ADDRESS
 
-	lda #2 ; copy a 0 to each entry
+	lda #'7' ; copy to each entry
 	jsr fill_name_table 
 
 	WaitForVBlank ; wait for vblank before enabling display
