@@ -7,7 +7,7 @@
 .include "nesdefs.inc"
 .include "util.inc"
 
-.segment "ZEROPAGE"
+.segment "ZEROPAGE", zeropage
 ScrollX = 0
 ScrollY = 0
 
@@ -30,11 +30,11 @@ nmi_vect:
 	sta PPU_CTRL_REG1
 
 	; scroll around
+	lda #0 ; load 0 into horizontal
+	sta PPU_SCROLL_REG
 	lda ScrollY ; vertical
 	sta PPU_SCROLL_REG
-	lda ScrollX ; horizontal
-	sta PPU_SCROLL_REG
-	inc ScrollX
+	inc ScrollY
 
 	pla ; restore A
 	rti
@@ -72,7 +72,7 @@ reset_vect:
 	sta PPU_ADDRESS
 	
 	; load first 4 colors
-	lda #$1c ; dark cyan
+	lda #$0f ; black (don't use $0d)
 	sta PPU_DATA
 	lda #$16 ; orange
 	sta PPU_DATA
@@ -81,24 +81,25 @@ reset_vect:
 	lda #$ff ; white
 	sta PPU_DATA
 
-	; set PPU to Name Table 0
+	; init name table data
+
+	; set PPU to Name Table #0
 	lda #$20
 	sta PPU_ADDRESS
 	lda #0
 	sta PPU_ADDRESS
 
-	; init name table data
-	ldx #$03 ; $3c0 = 960 name table entries
-	lda #0 ; copy a 0 to each entry
-init_name_table1:
-	ldy #$c0
-init_name_table2:
-	sta PPU_DATA
-	adc #1 ; increment
-	dey
-	bne init_name_table2 ; branch on Z=0
-	dex
-	bne init_name_table1 ; branch on Z=0
+	lda #4 ; copy a 4 to each entry
+	jsr fill_name_table 
+
+	; set PPU to Name Table #2
+	lda #$28
+	sta PPU_ADDRESS
+	lda #0
+	sta PPU_ADDRESS
+
+	lda #2 ; copy a 0 to each entry
+	jsr fill_name_table 
 
 	WaitForVBlank ; wait for vblank before enabling display
 
@@ -126,6 +127,19 @@ init_name_table2:
 
 loop_forever:
 	jmp loop_forever
+
+fill_name_table: ; A is the value to fill
+	ldx #5 ; 5*192 == 960 name table entries
+init_name_table1:
+	ldy #192
+init_name_table2:
+	sta PPU_DATA
+	; adc #1 ; increment
+	dey
+	bne init_name_table2 ; branch on Z=0
+	dex
+	bne init_name_table1 ; branch on Z=0
+	rts
 
 .segment "VECTORS"
 
