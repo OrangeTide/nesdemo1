@@ -10,10 +10,21 @@ clean ::
 .PHONY : all clean
 
 ##############################################################################
+## Remove default rules
+##############################################################################
+
+%.o : %.c
+
+%.o : %.s
+
+##############################################################################
 ## RULES & CONFIG
 ##############################################################################
+CC=cc65
 AS=ca65
 LD=ld65
+
+CFLAGS=-T -t nes
 
 %.nes : %.prg %.chr
 	nescombine -o $@ $(NESCOMBINE_FLAGS) $^
@@ -28,10 +39,15 @@ LD=ld65
 	pngtochr -o $@ $^
 
 %.o : %.s
-	$(AS) -o $@ $^
+	$(AS) $(ASFLAGS) -o $@ $^
+
+%.s : %.c
+	$(CC) $(CFLAGS) -o $@ $^
 
 %-pal.o : %.s
 	$(AS) -o $@ -D PAL=1 $^
+
+.PRECIOUS : %.s
 
 ##############################################################################
 ## Targets
@@ -73,3 +89,22 @@ $(NESDEMO2_PRG) : $(NESDEMO2_OBJS)
 
 $(NESDEMO2_EXEC) : NESCOMBINE_FLAGS=-m 0
 $(NESDEMO2_EXEC) : $(NESDEMO2_PRG) $(NESDEMO2_CHR)
+
+##############################################################################
+### game3
+##############################################################################
+
+GAME3_SRCS:=game3.s boot.s 
+GAME3_OBJS:=$(patsubst %.s,%.o,$(GAME3_SRCS:%.c=%.o))
+GAME3_EXEC:=game3.nes
+GAME3_PRG:=game3.prg
+GAME3_CHR:=game3.chr
+
+CLEAN_LIST+=$(GAME3_OBJS) $(GAME3_EXEC) $(GAME3_PRG)
+
+all :: $(GAME3_EXEC)
+
+$(GAME3_PRG) : $(GAME3_OBJS)
+
+$(GAME3_EXEC) : NESCOMBINE_FLAGS=-m 0
+$(GAME3_EXEC) : $(GAME3_PRG) $(GAME3_CHR)
