@@ -1,5 +1,5 @@
 ##############################################################################
-## Makefile 
+## Makefile
 ##############################################################################
 
 all ::
@@ -91,20 +91,20 @@ $(NESDEMO2_EXEC) : NESCOMBINE_FLAGS=-m 0
 $(NESDEMO2_EXEC) : $(NESDEMO2_PRG) $(NESDEMO2_CHR)
 
 ##############################################################################
-### game3
+### nesdemo3
 ##############################################################################
 
-GAME3_SRCS:=game3.s boot.s 
-GAME3_OBJS:=$(patsubst %.s,%.o,$(GAME3_SRCS:%.c=%.o))
-GAME3_EXEC:=game3.nes
-GAME3_PRG:=game3.prg
-GAME3_CHR:=game3.chr
+NESDEMO3_SRCS:=nesdemo3.s boot.s rand.s
+NESDEMO3_OBJS:=$(patsubst %.s,%.o,$(NESDEMO3_SRCS:%.c=%.o))
+NESDEMO3_EXEC:=nesdemo3.nes
+NESDEMO3_PRG:=nesdemo3.prg
+NESDEMO3_CHR:=nesdemo3.chr
 
-CLEAN_LIST+=$(GAME3_OBJS) $(GAME3_EXEC) $(GAME3_PRG)
+CLEAN_LIST+=$(NESDEMO3_OBJS) $(NESDEMO3_EXEC) $(NESDEMO3_PRG)
 
-all :: $(GAME3_EXEC)
+all :: $(NESDEMO3_EXEC)
 
-$(GAME3_PRG) : $(GAME3_OBJS)
+$(NESDEMO3_PRG) : $(NESDEMO3_OBJS)
 
-$(GAME3_EXEC) : NESCOMBINE_FLAGS=-m 0
-$(GAME3_EXEC) : $(GAME3_PRG) $(GAME3_CHR)
+$(NESDEMO3_EXEC) : NESCOMBINE_FLAGS=-m 0
+$(NESDEMO3_EXEC) : $(NESDEMO3_PRG) $(NESDEMO3_CHR)
