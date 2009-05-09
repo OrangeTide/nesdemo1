@@ -6,6 +6,10 @@
 
 .export _start, _nmi_vect, _irq_vect
 
+.ZEROPAGE
+ScrollX = 0
+ScrollY = 0
+
 .segment "CODE"
 
 .proc _start
@@ -106,10 +110,6 @@ _nmi_vect:
 
 _irq_vect:
 	rti
-
-.segment "ZEROPAGE", zeropage
-ScrollX = 0
-ScrollY = 0
 
 .segment "RODATA"
 Name_table_entries = 960

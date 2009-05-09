@@ -7,7 +7,7 @@
 .include "nesdefs.inc"
 .include "util.inc"
 
-.segment "ZEROPAGE", zeropage
+.segment "ZEROPAGE"
 ScrollX = 0
 ScrollY = 0
 
